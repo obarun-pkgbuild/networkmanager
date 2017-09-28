@@ -9,7 +9,7 @@
 
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
-pkgver=1.8.3dev+18+gf43222d41
+pkgver=1.8.4
 pkgrel=2
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
@@ -21,7 +21,7 @@ makedepends=(intltool dhclient iptables gobject-introspection gtk-doc "ppp=$_ppp
              libnewt libndp libteam vala perl-yaml python-gobject git vala jansson bluez-libs
              glib2-docs gettext)
 checkdepends=(libx11 python-dbus)
-_commit=f43222d4118fa4c58235f60de0d532531ba1bd8a # nm-1-8.
+_commit=51fdc50ab179a0582012d1b50e587761765ad15e # tags/1.8.4^0
 source=("git+https://anongit.freedesktop.org/git/NetworkManager/NetworkManager#commit=$_commit"
 		20-connectivity.conf
         NetworkManager.conf)
