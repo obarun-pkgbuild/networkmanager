@@ -9,7 +9,7 @@
 
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
-pkgver=1.8.4
+pkgver=1.10.0
 pkgrel=2
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
@@ -21,7 +21,7 @@ makedepends=(intltool dhclient iptables gobject-introspection gtk-doc "ppp=$_ppp
              libnewt libndp libteam vala perl-yaml python-gobject git vala jansson bluez-libs
              glib2-docs gettext)
 checkdepends=(libx11 python-dbus)
-_commit=51fdc50ab179a0582012d1b50e587761765ad15e # tags/1.8.4^0
+_commit=1193fb1b08fe45ce8713220132184581c4669362 # tags/1.10.0^0
 source=("git+https://anongit.freedesktop.org/git/NetworkManager/NetworkManager#commit=$_commit"
 		20-connectivity.conf
         NetworkManager.conf)
@@ -69,7 +69,7 @@ build() {
     --enable-polkit-agent \
     --enable-teamdctl \
     --enable-wifi \
-    --with-config-dhcp-default=dhclient \
+    --with-config-dhcp-default=internal \
     --with-config-dns-rc-manager-default=resolvconf \
     --with-config-plugins-default=keyfile,ibft \
     --with-crypto=nss \
@@ -77,12 +77,11 @@ build() {
     --with-dhclient=/usr/bin/dhclient \
     --with-dist-version="$pkgver-$pkgrel, Arch Linux" \
     --with-dnsmasq=/usr/bin/dnsmasq \
-    --with-dnssec-trigger=/usr/lib/dnssec-trigger \
+    --with-dnssec-trigger=/usr/lib/dnssec-trigger/dnssec-trigger-script \
     --with-hostname-persist=default \
     --with-iptables=/usr/bin/iptables \
     --with-kernel-firmware-dir=/usr/lib/firmware \
     --with-libnm-glib \
-    --with-libsoup \
     --with-modem-manager-1 \
     --with-nmcli \
     --with-nmtui \
@@ -92,16 +91,17 @@ build() {
     --with-session-tracking=consolekit \
     --with-suspend-resume=upower \
     --with-system-ca-path=/etc/ssl/certs \
-    --with-systemd-journal=no \
-    --with-systemd-logind=no \
     --with-udev-dir=/usr/lib/udev \
     --with-wext \
     --without-dhcpcd \
     --without-libaudit \
     --without-netconfig \
     --without-ofono \
-    --without-selinux
-
+    --without-selinux \
+    --with-systemdsystemunitdir=no \
+	--with-systemd-journal=no \
+    --with-systemd-logind=no
+    
   sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
 
   make
