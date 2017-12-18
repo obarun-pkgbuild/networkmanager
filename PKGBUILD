@@ -9,7 +9,7 @@
 
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
-pkgver=1.10.1dev+58+gd5dc3df20
+pkgver=1.10.2
 pkgrel=2
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
@@ -21,7 +21,7 @@ makedepends=(intltool dhclient iptables gobject-introspection gtk-doc "ppp=$_ppp
              libnewt libndp libteam vala perl-yaml python-gobject git vala jansson bluez-libs
              glib2-docs gettext)
 checkdepends=(libx11 python-dbus)
-_commit=d5dc3df20c742cbd196d3047767f99d0d7c2c5ca # nm-1-10
+_commit=7ebc9258452623679b9f1c27aee94c528c14b273 # tags/1.10.2^0
 source=("git+https://anongit.freedesktop.org/git/NetworkManager/NetworkManager#commit=$_commit"
 		20-connectivity.conf
         NetworkManager.conf)
@@ -43,6 +43,7 @@ pkgver() {
 }
 
 build() {
+	export PYTHONPATH="/usr/share/glib-2.0"
   cd NetworkManager
   ./configure --prefix=/usr \
     --sysconfdir=/etc \
