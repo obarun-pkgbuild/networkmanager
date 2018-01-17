@@ -9,7 +9,7 @@
 
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
-pkgver=1.10.2
+pkgver=1.10.3dev+38+g78ef57197
 pkgrel=2
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
@@ -21,17 +21,22 @@ makedepends=(intltool dhclient iptables gobject-introspection gtk-doc "ppp=$_ppp
              libnewt libndp libteam vala perl-yaml python-gobject git vala jansson bluez-libs
              glib2-docs gettext)
 checkdepends=(libx11 python-dbus)
-_commit=7ebc9258452623679b9f1c27aee94c528c14b273 # tags/1.10.2^0
+_commit=78ef571972aa3bf81b287d767ae02471e2924027 # nm-1-10
 source=("git+https://anongit.freedesktop.org/git/NetworkManager/NetworkManager#commit=$_commit"
 		20-connectivity.conf
-        NetworkManager.conf)
+        NetworkManager.conf
+        0001-nmp-netns-Mount-proc-in-the-new-namespace.patch)
 sha256sums=('SKIP'
             '477d609aefd991c48aca93dc7ea5a77ebebf46e0481184530cceda4c0d8d72c6'
-            '1afb0e849054ba68c3a3565746ed532a10a156fb3b686ac1280cf4afa985b89d')
+            '1afb0e849054ba68c3a3565746ed532a10a156fb3b686ac1280cf4afa985b89d'
+            '983bdeb61ddf75d7d3ad47675ab344dab8b172f0d8c08a00aebc1853c20b466c')
 validpgpkeys=('6DD4217456569BA711566AC7F06E8FDE7B45DAAC') # Eric Vidal
 
 prepare() {
   mkdir -p libnm{,-glib}/usr/{include,lib/{girepository-1.0,pkgconfig},share/{gir-1.0,gtk-doc/html,vala/vapi}}
+  
+  # Fix test_netns_general in our containers
+  patch -Np1 -i ../0001-nmp-netns-Mount-proc-in-the-new-namespace.patch
 
   cd NetworkManager
   NOCONFIGURE=1 ./autogen.sh
