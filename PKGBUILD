@@ -9,7 +9,7 @@
 
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
-pkgver=1.10.3dev+38+g78ef57197
+pkgver=1.10.5dev+3+g5159c34ea
 pkgrel=2
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
@@ -19,9 +19,9 @@ _pppver=2.4.7
 makedepends=(intltool dhclient iptables gobject-introspection gtk-doc "ppp=$_pppver" modemmanager
              dbus-glib iproute2 nss polkit wpa_supplicant libsoup libgudev libmm-glib
              libnewt libndp libteam vala perl-yaml python-gobject git vala jansson bluez-libs
-             glib2-docs gettext)
+             glib2-docs gettext dhcpcd)
 checkdepends=(libx11 python-dbus)
-_commit=78ef571972aa3bf81b287d767ae02471e2924027 # nm-1-10
+_commit=5159c34ea8923bf0c17fd31e183c5803b72b97f3 # nm-1-10
 source=("git+https://anongit.freedesktop.org/git/NetworkManager/NetworkManager#commit=$_commit"
 		20-connectivity.conf
         NetworkManager.conf
@@ -61,6 +61,7 @@ build() {
     --disable-ifnet \
     --disable-ifupdown \
     --disable-lto \
+    --disable-more-logging \
     --disable-more-warnings \
     --disable-static \
     --enable-bluez5-dun \
@@ -76,11 +77,13 @@ build() {
     --enable-teamdctl \
     --enable-wifi \
     --with-config-dhcp-default=internal \
-    --with-config-dns-rc-manager-default=resolvconf \
+    --with-config-dns-rc-manager-default=symlink \
     --with-config-plugins-default=keyfile,ibft \
     --with-crypto=nss \
     --with-dbus-sys-dir=/usr/share/dbus-1/system.d \
     --with-dhclient=/usr/bin/dhclient \
+    --with-dhcpcd-supports-ipv6 \
+    --with-dhcpcd=/usr/bin/dhcpcd \
     --with-dist-version="$pkgver-$pkgrel, Arch Linux" \
     --with-dnsmasq=/usr/bin/dnsmasq \
     --with-dnssec-trigger=/usr/lib/dnssec-trigger/dnssec-trigger-script \
@@ -101,6 +104,7 @@ build() {
     --with-wext \
     --without-dhcpcd \
     --without-libaudit \
+    --without-more-asserts \
     --without-netconfig \
     --without-ofono \
     --without-selinux \
@@ -123,7 +127,6 @@ package_networkmanager() {
            curl bluez-libs upower)
   optdepends=('dnsmasq: connection sharing'
               'bluez: Bluetooth support'
-              'openresolv: resolvconf support'
               'ppp: dialup connection support'
               'dhclient: External DHCP client'
               'modemmanager: cellular network support')
@@ -133,11 +136,19 @@ package_networkmanager() {
   cd NetworkManager
   make DESTDIR="$pkgdir" install
 
-  install -dm700 "$pkgdir/etc/NetworkManager/system-connections"
+  # packaged configuration
+  install -Dm644 /dev/stdin "$pkgdir/usr/lib/NetworkManager/conf.d/20-connectivity.conf" <<END
+[connectivity]
+uri=http://www.archlinux.org/check_network_status.txt
+END
+
+  # /etc/NetworkManager
   install -d "$pkgdir"/etc/NetworkManager/{conf,dnsmasq}.d
-  install -m644 ../NetworkManager.conf "$pkgdir/etc/NetworkManager/"
-  install -Dm644 ../20-connectivity.conf \
-	"$pkgdir/usr/lib/NetworkManager/conf.d/20-connectivity.conf"
+  install -dm700 "$pkgdir/etc/NetworkManager/system-connections"
+  install -m644 /dev/stdin "$pkgdir/etc/NetworkManager/NetworkManager.conf" <<END
+# Configuration file for NetworkManager.
+# See "man 5 NetworkManager.conf" for details.
+END
 
 ### Split libnm
 
