@@ -10,7 +10,7 @@
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
 pkgver=1.10.6
-pkgrel=4
+pkgrel=5
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
 license=(GPL2 LGPL2.1)
