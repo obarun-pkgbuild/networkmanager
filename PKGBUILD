@@ -10,14 +10,14 @@
 pkgbase=networkmanager
 pkgname=(networkmanager libnm libnm-glib)
 pkgver=1.10.6
-pkgrel=5
+pkgrel=6
 pkgdesc="Network connection manager and user applications"
 arch=(x86_64)
 license=(GPL2 LGPL2.1)
 url="https://wiki.gnome.org/Projects/NetworkManager"
 _pppver=2.4.7
 makedepends=(intltool dhclient iptables gobject-introspection gtk-doc "ppp=$_pppver" modemmanager
-             dbus-glib iproute2 nss polkit wpa_supplicant libsoup libgudev libmm-glib
+             dbus-glib iproute2 nss polkit wpa_supplicant libgudev libmm-glib
              libnewt libndp libteam vala perl-yaml python-gobject git vala jansson bluez-libs
              glib2-docs gettext dhcpcd)
 checkdepends=(libx11 python-dbus)
@@ -34,6 +34,7 @@ prepare() {
   mkdir -p libnm{,-glib}/usr/{include,lib/{girepository-1.0,pkgconfig},share/{gir-1.0,gtk-doc/html,vala/vapi}}
 
   cd NetworkManager
+  git cherry-pick -n 4d1f090aedf05c0e2955d431638e311d1e18a52f
   NOCONFIGURE=1 ./autogen.sh
 }
 
@@ -119,7 +120,7 @@ check() {
 }
 
 package_networkmanager() {
-  depends=(libnm-glib iproute2 polkit wpa_supplicant libsoup libmm-glib libnewt libndp libteam
+  depends=(libnm-glib iproute2 polkit wpa_supplicant libmm-glib libnewt libndp libteam
            curl bluez-libs upower dhclient)
   optdepends=('dnsmasq: connection sharing'
               'bluez: Bluetooth support'
